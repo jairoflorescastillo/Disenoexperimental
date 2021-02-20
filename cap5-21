@@ -1,0 +1,155 @@
+---
+title: "EXAMEN FINAL-DISEÑO EXPERIMENTAL"
+author: "Richard Montero"
+date: "15/2/2021"
+output: 
+  html_document: 
+    toc: yes
+    toc_float: yes
+    number_sections: yes
+    theme: flatly
+---
+
+# **DISENO EN BLOQUE COMPLETAMENTE AL AZAR**
+
+## **TEORIA:**
+
+## **Problema 1**
+
+## **Problema 2**
+
+
+
+
+
+
+
+
+
+
+
+
+## **Problema 3**
+
+# **DISENO FACTORIAL**
+
+## **TEORIA**
+
+El objetivo de un diseño factorial es estudiar el efecto de varios factores sobre una o varias respuestas, cuando se tiene el mismo interés sobre todos los factores.Uno de los objetivos particulares  más importantes que en ocasiones tiene un diseño factorial es determinar una combinación de niveles de los factores en la que el desempeño del proceso sea mejor.
+Para estudiar la manera en que influye cada factor sobre la variable de respuesta es necesario elegir al menos dos niveles de prueba para cada uno de ellos. Con el diseño factorial completo se corren aleatoriamente todas las posibles combinaciones que pueden formarse con los niveles de los factores a investigar.
+
+**Diseño factorial**
+
+Diseño experimental que sirve para estudiar el efecto individual y de interacción de varios factores sobre una o varias respuestas.
+
+**Efecto Principal**
+
+Es igual a la respuesta promedio observada en el nivel alto de un factor, menos la respuesta promedio en el nivel bajo.
+
+**Efecto de Interacción**
+
+Dos factores interactúan de manera significativa sobre la variable de respuesta cuando el efecto de uno depende del nivel en que está el otro.
+
+**Diseños Factoriales con Dos Factores**
+
+Considere los factores A y B con a y b (a, b ≥ 2) niveles de prueba, respectivamente. Con ellos se puede construir el arreglo o diseño factorial a × b, el cual consiste en a × b tratamientos. Algunos casos particulares de uso frecuente son: el factorial 22, el factorial 32 y el factorial 3 × 2. Se llama réplica a cada corrida completa del arreglo factorial. Los diseños factoriales que involucran menos de cuatro factores por lo regular se corren replicados para tener la potencia necesaria en las pruebas estadísticas sobre los efectos de interés. Si se hacen n réplicas, el número total de corridas experimentales es n(a × b).
+
+**Diseños Factoriales con Tres Factores**
+
+Cuando se quiere investigar la influencia de tres factores (A, B y C) sobre una o más variables de respuesta, y el número de niveles de prueba en cada uno de los factores es a, b y c, respectivamente, se puede construir el arreglo factorial a × b × c, que consiste de a × b × c tratamientos o puntos experimentales. Entre los arreglos de este tipo que se utilizan con frecuencia en aplicaciones diversas se encuentran: el factorial 23, el factorial 33 y los factoriales mixtos con no más de cuatro niveles en dos de los factores, por ejemplo, el factorial 4 × 3 × 2 y el factorial 4 × 4 × 2, por mencionar dos de ellos.
+
+## **Problema 21**
+
+### Resolucion del Problema
+
+Se desea investigar de qué manera afecta el tiempo de curado y el tipo del acelerante a la resistencia de caucho vulcanizado. Se realiza un experimento y se obtienen los siguientes datos:
+
+![Tabla 5-21](tabla 5-21.png)
+
+
+### Entrada De Los Datos
+
+```{r}
+df=read.csv("CAP 5PROBLEM 21.csv", sep=";")
+df
+str(df)
+df$ACELERANTE=factor(df$ACELERANTE)
+df$TIEMPO.DE.CURA=factor(df$TIEMPO.DE.CURA)
+
+```
+
+### Analisis de ANOVA
+
+```{r}
+modelo=aov(Y~ACELERANTE+TIEMPO.DE.CURA,data=df)
+summary(modelo)
+```
+El p_valor= 0.46 y 0.86 sugiere que no hay diferencia significativa entre los acelerantes y el tiempo de curado a las resistencia de caucho volcanico. 
+
+### Boxplot: Comparacion de Experimentos
+
+```{r}
+boxplot(Y~TIEMPO.DE.CURA,data=df)
+boxplot(Y~ACELERANTE,data=df)
+boxplot(Y~ACELERANTE*TIEMPO.DE.CURA,data=df)
+interaction.plot(df$ACELERANTE,df$TIEMPO.DE.CURA,df$Y)
+
+```
+
+1- No existe diferencia en las graficas de tiempo de curado y acelerante -1 y 1, pero si hay diferencia significativa  en el tiempo de curado y acelerante 0.
+
+2- En la grafica de comparacion del acelerantes y tiempo de curado señala que son diferentes los valores.
+
+3- No existe interaccion entre los experimentos 0 y -1. 
+
+
+### Prueba de Comparaciones Multiples: TukeyHSD
+
+```{r}
+tk=TukeyHSD(modelo)
+tk
+```
+Al comparar las medias de los diferentes valores  obtenemos p_valores > 0.05 por lo que no existe diferencias significativas en entre las medias de los acelerantes y el tiempo de curado de los experimantos
+
+### Prueba de Normalidad
+
+```{r}
+qqnorm(modelo$residuals)
+qqline(modelo$residuals)
+shapiro.test(modelo$residuals)
+```
+La prueba de Shapiro Wilks arroja un  valor de p=0.2994 por lo que se acepta la Ho.
+
+### Prueba de Levene para la Igualdad de Varianza
+
+```{r}
+require(car)
+leveneTest(Y~ACELERANTE,data=df)
+leveneTest(Y~TIEMPO.DE.CURA,data=df)
+
+```
+La prueba de levene indica  que las varianzas son  iguales a un nivel de significancia de 95%.
+
+### Prueba de Indepencia de Los Errores de los Datos
+
+```{r}
+plot(modelo$residuals)
+abline(h=0)
+```
+En la tabla demuestra que los modelos residuales de los experiementos son diferentes a la linea 0 estan bastante dispersos..
+
+### CONCLUSION
+
+Este problema se realizo bajo un diseño factorial 3x3 con dos factores. Las hipotesis estadisticas tanto de los acelerantes y la del tiempo de curado demostraron que existe diferencias en ambas graficas de los datos por lo que se desaprueba la Ho y se aprueba la Ha.
+
+Se comprobo que el mejor tiempo curado a 14ºC  de 60 minutos tiene un mayor afecto para aumentar la resistencia de caucho volcanico.En cuanto a los acelerante se comprobo que el acelerante B mostro un mayor efecto para el mejoramiento de la resistencia del caucho volcanico.
+
+Se demostro que la combinacion de tiempo de curado a 14ºc de 60 minutos y acelerante B muestra una mejor resistencia al caucho vulcanizado.
+
+Mediante la prueba de shapiro winks se obtuvo un valor p_valor de 0.2994 lo que significa que se acepta la Ho. 
+
+
+## **Problema 2**
+
+## **Problema 3**
+
